@@ -20,36 +20,36 @@ public class FifaGUI extends JFrame implements ActionListener {
         JPanel jp = (JPanel) this.getContentPane();
         jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS)); // layout vertical
 
-        // Criação do menu
+        // cria menu
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        // Menu "Arquivos"
+        // menu "Arquivos"
         JMenu menuArquivos = new JMenu("Arquivos");
         menuBar.add(menuArquivos);
 
-        // Item "Abrir"
+        // item "Abrir"
         JMenuItem itemAbrir = new JMenuItem("Abrir");
         itemAbrir.setActionCommand("abrir_arquivo");
         itemAbrir.addActionListener(this);
         menuArquivos.add(itemAbrir);
 
-        // Item "Fechar"
+        // item "Fechar"
         JMenuItem itemFechar = new JMenuItem("Fechar");
         itemFechar.setActionCommand("fechar");
         itemFechar.addActionListener(this);
         menuArquivos.add(itemFechar);
 
-        // Menu "Criar"
+        // menu "Criar"
         JMenu menuCriar = new JMenu("Criar");
 
-        // Submenu "Texto"
+        // submenu "Texto"
         JMenuItem subMenuTexto = new JMenuItem("Texto");
         subMenuTexto.setActionCommand("criar_texto");
         subMenuTexto.addActionListener(this);
         menuCriar.add(subMenuTexto);
 
-        // Submenu "Binário"
+        // submenu "Binário"
         JMenuItem subMenuBinario = new JMenuItem("Binário");
         subMenuBinario.setActionCommand("criar_binario");
         subMenuBinario.addActionListener(this);
@@ -57,7 +57,7 @@ public class FifaGUI extends JFrame implements ActionListener {
 
         menuArquivos.add(menuCriar);
 
-        // Item "Sair"
+        // item "Sair"
         JMenuItem itemSair = new JMenuItem("Sair");
         itemSair.setActionCommand("sair");
         itemSair.addActionListener(this);
@@ -66,7 +66,7 @@ public class FifaGUI extends JFrame implements ActionListener {
         // Layout para busca inicial dos registros
         // campo ID
         label_id = new JLabel("ID:");
-        id = new JTextField(20); // Define um tamanho preferencial para o campo
+        id = new JTextField(20); // define um tamanho preferencial para o campo
 
         // campo IDADE
         label_idade = new JLabel("Idade:");
@@ -85,7 +85,7 @@ public class FifaGUI extends JFrame implements ActionListener {
         nomeClube = new JTextField(20);
 
         buttonOK = new JButton("Procurar");
-        buttonOK.addActionListener(this); // Adiciona o ActionListener ao botão
+        buttonOK.addActionListener(this); // adiciona o ActionListener ao botão
 
         // Adiciona os componentes na ordem desejada
         jp.add(label_id);
@@ -100,12 +100,12 @@ public class FifaGUI extends JFrame implements ActionListener {
         jp.add(nomeClube);
         jp.add(buttonOK);
 
-        // Configurações do JFrame
+        // configurações do JFrame
         setTitle("FIFINHA");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Sai no "x"
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // sai no "x"
         setResizable(false);
-        setSize(400, 300); // Tamanho da GUI
-        setLocationRelativeTo(null); // Centraliza a janela na tela
+        setSize(400, 300); // tamanho da GUI
+        setLocationRelativeTo(null); // centraliza a janela na tela
     }
 
     @Override
@@ -116,22 +116,22 @@ public class FifaGUI extends JFrame implements ActionListener {
             case "abrir_arquivo": // selecionou "abrir" menu
                 JOptionPane.showMessageDialog(this, "Abrir selecionado!");
                 break;
-            case "fechar":
+            case "fechar": // selecionou "fechar" menu
                 JOptionPane.showMessageDialog(this, "Fechar selecionado!");
                 break;
-            case "criar_texto":
+            case "criar_texto": // selecionou "criar -> texto" menu
                 JOptionPane.showMessageDialog(this, "Texto selecionado!");
                 break;
-            case "criar_binario":
+            case "criar_binario": // selecionou "criar -> binário" menu
                 JOptionPane.showMessageDialog(this, "Binário selecionado!");
                 break;
-            case "sair":
+            case "sair": // selecionou "sair" menu
                 int option = JOptionPane.showConfirmDialog(this, "Deseja realmente sair?", "Confirmação", JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
                 break;
-            case "Procurar":
+            case "Procurar": // acionou botão "Procurar"
                 JOptionPane.showMessageDialog(this, "Botão Procurar foi clicado!");
                 break;
             default:
