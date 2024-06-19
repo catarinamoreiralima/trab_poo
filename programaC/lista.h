@@ -1,0 +1,47 @@
+#ifndef LISTA_H
+#define LISTA_H
+
+#define SUCESSO 1
+#define NAO_EXISTE -1
+#define JA_EXISTE -2
+#define INVALIDO -3
+#define CHEIA -4
+#define VAZIA -5
+
+typedef struct
+{
+	int tamanho;
+	long byteOffset;
+	// qqer outra coisa
+} t_elemento;
+
+typedef struct t_no *t_apontador;
+
+typedef struct t_no
+{
+	t_elemento elemento;
+	t_apontador proximo;
+} t_no;
+
+typedef struct
+{
+	t_apontador primeiro;
+	// outras coisas como contador, ultimo, etc
+	t_apontador ultimo;
+} t_lista;
+
+int inicializar(t_lista *l);
+int inserir(t_elemento e, t_lista *l);
+int remover(long chave, t_lista *l);
+t_elemento pesquisar(long chave, t_lista *l);
+int vazia(t_lista *l);
+int cheia(t_lista *l);
+void imprimir(t_lista *l);
+long achaTamanho(t_lista *l, int tamNovo);
+int inserirOrdenado(t_elemento e, t_lista *l);
+int inserirPrimeiro(t_elemento e, t_lista *l);
+int inserirUltimo(t_elemento e, t_lista *l);
+void liberaLista(t_lista *t);
+void imprimeLista (t_lista *l);
+
+#endif
