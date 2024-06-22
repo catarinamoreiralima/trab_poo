@@ -24,7 +24,7 @@ public class FifaGUI extends JFrame implements ActionListener {
 
     public FifaGUI() {
         try {
-            socket = new Socket("localhost", 12345);  // conecta ao servidor
+            socket = new Socket("localhost", 12345); // conecta ao servidor
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
@@ -112,10 +112,12 @@ public class FifaGUI extends JFrame implements ActionListener {
                 fecharArquivoBinario();
                 break;
             case "listagem":
-                JOptionPane.showMessageDialog(this, "Um arquivo txt foi criado com a listagem com todos os registros do arquivo carregados!");
+                StringBuilder searchQueryBuilder = new StringBuilder();
+                searchQueryBuilder.append("2 ").append(nomeArqBin);
                 break;
             case "sair":
-                int option = JOptionPane.showConfirmDialog(this, "Deseja realmente sair?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                int option = JOptionPane.showConfirmDialog(this, "Deseja realmente sair?", "Confirmação",
+                        JOptionPane.YES_NO_OPTION);
                 if (option == JOptionPane.YES_OPTION) {
                     try {
                         socket.close();
@@ -127,57 +129,25 @@ public class FifaGUI extends JFrame implements ActionListener {
                 break;
             case "Procurar":
                 if (nomeArqBin == null) {
-                    JOptionPane.showMessageDialog(this, "Por favor, carregue um arquivo primeiro!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Por favor, carregue um arquivo primeiro!", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 boolean algumCampoPreenchido = !id.getText().trim().isEmpty() ||
-                                              !idade.getText().trim().isEmpty() ||
-                                              !nomeJogador.getText().trim().isEmpty() ||
-                                              !nacionalidade.getText().trim().isEmpty() ||
-                                              !nomeClube.getText().trim().isEmpty();
-                
+                        !idade.getText().trim().isEmpty() ||
+                        !nomeJogador.getText().trim().isEmpty() ||
+                        !nacionalidade.getText().trim().isEmpty() ||
+                        !nomeClube.getText().trim().isEmpty();
+
                 if (!algumCampoPreenchido) {
-                    JOptionPane.showMessageDialog(this, "Por favor, preencha ao menos um campo para realizar a pesquisa.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this,
+                            "Por favor, preencha ao menos um campo para realizar a pesquisa.", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                StringBuilder searchQueryBuilder = new StringBuilder();
-                StringBuilder campos = new StringBuilder(); // buffer que guardará os campos digitados
-                int cont = 0; // contará quantos campos foram escritos na gui
-
-                searchQueryBuilder.append("3 ").append(nomeArqBin).append(" 1\n");
-                if (!id.getText().trim().isEmpty()) {
-                    campos.append("id ").append(id.getText().trim()).append(" ");
-                    cont++;
-                } else {
-                    if (!idade.getText().trim().isEmpty()) {
-                        campos.append("idade ").append(idade.getText().trim()).append(" ");
-                        cont++;
-                    }
-                    if (!nomeJogador.getText().trim().isEmpty()) {
-                        campos.append("nome ").append("\"").append(nomeJogador.getText().trim()).append("\"").append(" ");
-                        cont++;
-                    }
-                    if (!nacionalidade.getText().trim().isEmpty()) {
-                        campos.append("nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"").append(" ");
-                        cont++;
-                    }
-                    if (!nomeClube.getText().trim().isEmpty()) {
-                        campos.append("clube ").append("\"").append(nomeClube.getText().trim()).append("\"").append(" ");
-                        cont++;
-                    }
-                }
-
-                searchQueryBuilder.append(cont).append(" ").append(campos);
-
-                // remove o último " " se tiver
-                String searchQuery = searchQueryBuilder.toString();
-                if (searchQuery.endsWith(" ")) {
-                    searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
-                }
-
-                out.println(searchQuery);
+                chamaFunc3();
 
                 break;
             default:
@@ -188,28 +158,67 @@ public class FifaGUI extends JFrame implements ActionListener {
     private void abrirArquivoBinario() {
         JFileChooser ecolheArq = new JFileChooser();
         int returnValue = ecolheArq.showOpenDialog(this);
-    
+
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File arquivoSelecionado = ecolheArq.getSelectedFile();
-            nomeArqBin = arquivoSelecionado.getAbsolutePath();
-    
+            nomeArqBin = arquivoSelecionado.getName(); // Obter apenas o nome do arquivo
+
             // cria e executa a tarefa de abrir o arquivo
-            AbrirArquivoTask task = new AbrirArquivoTask(out, in, nomeArqBin);
+            AbrirArquivoTask task = new AbrirArquivoTask(out, in, arquivoSelecionado.getAbsolutePath());
             task.execute();
         }
     }
-    
-    
+
     private void fecharArquivoBinario() {
         if (nomeArqBin != null) {
             // cria e executa a tarefa de fechar o arquivo
             FecharArquivoTask task = new FecharArquivoTask(out, in, nomeArqBin);
             task.execute();
-            
+
             // Definir nomeArqBin como null para indicar que nenhum arquivo está aberto
             nomeArqBin = null;
         } else {
             JOptionPane.showMessageDialog(this, "Nenhum arquivo aberto para fechar.");
         }
+    }
+
+    private void chamaFunc3() {
+        StringBuilder searchQueryBuilder = new StringBuilder();
+        StringBuilder campos = new StringBuilder(); // buffer que guardará os campos digitados
+        int cont = 0; // contará quantos campos foram escritos na gui
+
+        searchQueryBuilder.append("3 ").append(nomeArqBin).append(" 1\n");
+        if (!id.getText().trim().isEmpty()) {
+            campos.append("id ").append(id.getText().trim()).append(" ");
+            cont++;
+        } else {
+            if (!idade.getText().trim().isEmpty()) {
+                campos.append("idade ").append(idade.getText().trim()).append(" ");
+                cont++;
+            }
+            if (!nomeJogador.getText().trim().isEmpty()) {
+                campos.append("nome ").append("\"").append(nomeJogador.getText().trim()).append("\"").append(" ");
+                cont++;
+            }
+            if (!nacionalidade.getText().trim().isEmpty()) {
+                campos.append("nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"")
+                        .append(" ");
+                cont++;
+            }
+            if (!nomeClube.getText().trim().isEmpty()) {
+                campos.append("clube ").append("\"").append(nomeClube.getText().trim()).append("\"").append(" ");
+                cont++;
+            }
+        }
+
+        searchQueryBuilder.append(cont).append(" ").append(campos);
+
+        // remove o último " " se tiver
+        String searchQuery = searchQueryBuilder.toString();
+        if (searchQuery.endsWith(" ")) {
+            searchQuery = searchQuery.substring(0, searchQuery.length() - 1);
+        }
+
+        out.println(searchQuery);
     }
 }
