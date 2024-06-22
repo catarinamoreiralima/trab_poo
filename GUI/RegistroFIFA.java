@@ -1,31 +1,28 @@
-
-
 public class RegistroFIFA {
-    private int id;
-    private int idade;
+    private String id;
     private String nomeJogador;
+    private String idade;
     private String nacionalidade;
     private String nomeClube;
 
-    public RegistroFIFA(int id, int idade, String nomeJogador, String nacionalidade, String nomeClube) {
+    public RegistroFIFA(String id, String nomeJogador, String idade, String nacionalidade, String nomeClube) {
         this.id = id;
-        this.idade = idade;
         this.nomeJogador = nomeJogador;
+        this.idade = idade;
         this.nacionalidade = nacionalidade;
         this.nomeClube = nomeClube;
     }
 
-
-    public int getId() {
+    public String getId() {
         return id;
-    }
-
-    public int getIdade() {
-        return idade;
     }
 
     public String getNomeJogador() {
         return nomeJogador;
+    }
+
+    public String getIdade() {
+        return idade;
     }
 
     public String getNacionalidade() {
@@ -36,5 +33,8 @@ public class RegistroFIFA {
         return nomeClube;
     }
 
+    @Override
+    public String toString() {
+        return id + " - " + nomeJogador;
+    }
 }
-
