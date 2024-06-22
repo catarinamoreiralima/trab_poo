@@ -1,47 +1,37 @@
-import socket
-import threading
+import socket  # Importa o módulo de socket
 
-clients = []
+# Define o host e a porta
+HOST = 'localhost'
+PORT = 12345
 
-def handle_client(client_socket):
-    while True:
-        try:
-            message = client_socket.recv(1024).decode('utf-8')
-            if message:
-                print(f"Received: {message}")
-                broadcast(message, client_socket)
-            else:
-                remove(client_socket)
-                break
-        except:
-            remove(client_socket)
+# Cria um objeto de socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Vincula o socket ao host e à porta
+server_socket.bind((HOST, PORT))
+
+# Coloca o socket em modo de escuta para aceitar conexões
+server_socket.listen(1)
+print(f'Server listening on {HOST}:{PORT}...')
+
+# Aceita uma conexão
+client_socket, client_address = server_socket.accept()
+print(f'Connection from {client_address} established.')
+
+try:
+    while True:  # Loop para continuar recebendo dados do cliente
+        # Recebe dados do cliente
+        data = client_socket.recv(1024).decode('utf-8')
+        if not data:  # Se não receber dados, sai do loop
             break
+        print(f'Received from client: {data}')
 
-def broadcast(message, client_socket):
-    for client in clients:
-        if client != client_socket:
-            try:
-                client.send(message.encode('utf-8'))
-            except:
-                remove(client)
+        # Envia uma resposta de volta para o cliente
+        response = f'Server received: {data}'
+        client_socket.sendall(response.encode('utf-8'))
 
-def remove(client_socket):
-    if client_socket in clients:
-        clients.remove(client_socket)
-
-def main():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(('0.0.0.0', 5556))
-    server.listen(5)
-    print("Server started on port 5556")
-
-    while True:
-        client_socket, addr = server.accept()
-        clients.append(client_socket)
-        print(f"Connection established with {addr}")
-
-        client_handler = threading.Thread(target=handle_client, args=(client_socket,))
-        client_handler.start()
-
-if __name__ == "__main__":
-    main()
+finally:
+    # Fecha a conexão
+    client_socket.close()
+    server_socket.close()
+    print('Server closed.')
