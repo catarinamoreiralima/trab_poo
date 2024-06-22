@@ -143,24 +143,25 @@ public class FifaGUI extends JFrame implements ActionListener {
             if (!id.getText().trim().isEmpty()) {
                 campos.append("id ").append(id.getText().trim()).append(" ");
                 cont++;
+            }else{
+                
+                if (!idade.getText().trim().isEmpty()) {
+                    campos.append("idade ").append(idade.getText().trim()).append(" ");
+                    cont++;
+                }
+                if (!nomeJogador.getText().trim().isEmpty()) {
+                    campos.append("nome ").append("\"").append(nomeJogador.getText().trim()).append("\"").append(" ");
+                    cont++;
+                }
+                if (!nacionalidade.getText().trim().isEmpty()) {
+                    campos.append("nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"").append(" ");
+                    cont++;
+                }
+                if (!nomeClube.getText().trim().isEmpty()) {
+                    campos.append("clube ").append("\"").append(nomeClube.getText().trim()).append("\"").append(" ");
+                    cont++;
+                }
             }
-            if (!idade.getText().trim().isEmpty()) {
-                campos.append("idade ").append(idade.getText().trim()).append(" ");
-                cont++;
-            }
-            if (!nomeJogador.getText().trim().isEmpty()) {
-                campos.append("nome ").append("\"").append(nomeJogador.getText().trim()).append("\"").append(" ");
-                cont++;
-            }
-            if (!nacionalidade.getText().trim().isEmpty()) {
-                campos.append("nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"").append(" ");
-                cont++;
-            }
-            if (!nomeClube.getText().trim().isEmpty()) {
-                campos.append("clube ").append("\"").append(nomeClube.getText().trim()).append("\"").append(" ");
-                cont++;
-            }
-
             searchQueryBuilder.append(cont).append(" ").append(campos);
 
             // remove o último " " se tiver
