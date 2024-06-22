@@ -112,8 +112,9 @@ public class FifaGUI extends JFrame implements ActionListener {
                 fecharArquivoBinario();
                 break;
             case "listagem":
-                StringBuilder searchQueryBuilder = new StringBuilder();
-                searchQueryBuilder.append("2 ").append(nomeArqBin);
+                StringBuilder chamaFunc2 = new StringBuilder();
+                chamaFunc2.append("2 ").append(nomeArqBin);
+                out.println(chamaFunc2);
                 break;
             case "sair":
                 int option = JOptionPane.showConfirmDialog(this, "Deseja realmente sair?", "Confirmação",
