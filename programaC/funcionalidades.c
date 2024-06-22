@@ -131,7 +131,6 @@ int func3(char *arqDados, int buscas)
 
     for (int i = 0; i < buscas; i++)
     {
-
         // le quantos campos serao utilizados na pesquisa
         scanf("%d", &qntd);
 
@@ -157,6 +156,62 @@ int func3(char *arqDados, int buscas)
         buscaSequencial(campos, strs, intrs, f, qntd);
     }
 
+    fclose(f);
+}
+
+int func3POO(char *arqDados, int buscas, char *strinput)
+{
+    
+    FILE *f;
+    cabecalho c;
+    int qntd;            // quantidade de campos para filtrar a pesquisa
+    char campos[20][20]; // lista de campos para pesquisa
+    char strs[20][20];
+    int intrs[20];
+    int eh_id;
+
+    // abre arquivo em modo leitura
+    abreArquivoBinario(&f, arqDados, "rb");
+
+    leCabecalho(f, &c);
+    if (c.status == '0')
+    {
+        printf("Falha no processamento do arquivo.\n");
+        return 1;
+    }
+
+    // abre string input como uma stream
+    FILE *stream;
+    stream = fmemopen(strinput, strlen (strinput), "r");
+
+    for (int i = 0; i < buscas; i++)
+    {
+        // le quantos campos serao utilizados na pesquisa
+        fscanf(stream,"%d", &qntd);
+
+        // pega os campos
+        for (int j = 0; j < qntd; j++)
+        {
+            fscanf(stream, "%s", campos[j]);
+            // verifica se o campo eh int ou string
+            if (strcmp(campos[j], "idade") == 0 || strcmp(campos[j], "id") == 0)
+                fscanf(stream, "%d", &intrs[j]);
+            else
+                scan_quote_string(strs[j]);
+        }
+
+        // IMPRIME QUAL A BUSCA
+        printf("Busca %d\n\n", i + 1);
+
+        // volta ao primeiro registro
+        fseek(f, 0, SEEK_SET);
+
+        pulaCabecalho(f);
+
+        buscaSequencial(campos, strs, intrs, f, qntd);
+    }
+
+    fclose(stream);
     fclose(f);
 }
 

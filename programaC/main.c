@@ -9,6 +9,9 @@
 #include "lista.h"
 #include "registros.h"
 #include "indice.h"
+#include "integraPOO.h"
+
+
 
 
 // programa.c
