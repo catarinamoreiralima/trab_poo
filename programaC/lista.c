@@ -3,6 +3,10 @@
 #include "lista.h"
 #include "indice.h"
 
+void teste1(int i){
+    printf("%d\n", i);
+}
+
 /// @brief funcao que inicializa uma lista ligada
 /// @param l lista
 /// @return sucessor/falha

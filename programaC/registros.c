@@ -162,6 +162,19 @@ void imprimeRegistro(registro r)
     printf("\n");
 }
 
+/**
+ * Performs a sequential search in a file to find records that match the given
+ * fields and values. Prints the records that match all the fields. If the
+ * "id" field is specified, the function stops after finding the first match.
+ *
+ * @param campos An array of strings representing the fields to search for.
+ * @param strs An array of strings representing the values to search for.
+ * @param intrs An array of integers representing the values to search for.
+ * @param f The file to search in.
+ * @param qntd The number of fields to search for.
+ *
+ * @throws None.
+ */
 void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, int qntd)
 {
 
@@ -182,7 +195,7 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
         // tudo bate ate q se prove o contrario
         bate = 1;
 
-        for (int j = 0; j < qntd; j++)
+        for (int j = 0; j < qntd; j++) // para cada campo
         {
 
             // se estiver removido, nao bate
@@ -192,17 +205,17 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
                 break;
             }
 
-            if (strcmp(campos[j], "id") == 0)
+            if (strcmp(campos[j], "id") == 0) // se o campo j é id
             {
                 eh_id = 1;
-                if (r.id != intrs[j])
+                if (r.id != intrs[j]) // se o id NAO é o mesmo
                 {
-                    bate = 0;
-                    break;
+                    bate = 0; // nao bate
+                    break; // sai fora
                 }
             }
-            if (strcmp(campos[j], "idade") == 0)
-                if (r.idade != intrs[j])
+            if (strcmp(campos[j], "idade") == 0) //se o campo j é idade
+                if (r.idade != intrs[j]) // se a idade NAO eh a mesma
                 {
                     bate = 0;
                     break;

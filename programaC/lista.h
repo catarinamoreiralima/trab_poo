@@ -43,5 +43,6 @@ int inserirPrimeiro(t_elemento e, t_lista *l);
 int inserirUltimo(t_elemento e, t_lista *l);
 void liberaLista(t_lista *t);
 void imprimeLista (t_lista *l);
+void teste1(int i);
 
 #endif

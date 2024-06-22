@@ -1,6 +1,9 @@
 all:
 	gcc *.c *.h -o main
 
+library:
+	gcc -shared -fPIC -o lib.so *.c *.h
+
 run: 
 	./main
 
