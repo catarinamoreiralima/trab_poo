@@ -1,4 +1,5 @@
-import socket  # Importa o módulo de socket
+import socket
+import os
 
 # Define o host e a porta
 HOST = 'localhost'
@@ -14,20 +15,54 @@ server_socket.bind((HOST, PORT))
 server_socket.listen(1)
 print(f'Server listening on {HOST}:{PORT}...')
 
+# Dicionário para armazenar arquivos abertos
+arquivos_abertos = {}
+
+# Função para abrir um arquivo binário
+def abrir_arquivo(nome_arquivo):
+    if nome_arquivo in arquivos_abertos:
+        return "ERRO: Arquivo já está aberto."
+    try:
+        arquivo = open(nome_arquivo, 'rb')
+        arquivos_abertos[nome_arquivo] = arquivo
+        return "OK"
+    except Exception as e:
+        return f"ERRO: {str(e)}"
+
+# Função para fechar um arquivo binário
+def fechar_arquivo(nome_arquivo):
+    if nome_arquivo not in arquivos_abertos:
+        return "ERRO: Arquivo não está aberto."
+    try:
+        arquivos_abertos[nome_arquivo].close()
+        del arquivos_abertos[nome_arquivo]
+        return "OK"
+    except Exception as e:
+        return f"ERRO: {str(e)}"
+
 # Aceita uma conexão
 client_socket, client_address = server_socket.accept()
 print(f'Connection from {client_address} established.')
 
 try:
-    while True:  # Loop para continuar recebendo dados do cliente
+    while True:
         # Recebe dados do cliente
         data = client_socket.recv(1024).decode('utf-8')
-        if not data:  # Se não receber dados, sai do loop
+        if not data:
             break
         print(f'Received from client: {data}')
 
+        # Processa o comando recebido
+        if data.startswith("open "):
+            nome_arquivo = data.split(" ", 1)[1]
+            response = abrir_arquivo(nome_arquivo)
+        elif data.startswith("close "):
+            nome_arquivo = data.split(" ", 1)[1]
+            response = fechar_arquivo(nome_arquivo)
+        else:
+            response = "ERRO: Comando desconhecido."
+
         # Envia uma resposta de volta para o cliente
-        response = f'Server received: {data}'
         client_socket.sendall(response.encode('utf-8'))
 
 finally:
