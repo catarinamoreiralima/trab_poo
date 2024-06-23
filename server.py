@@ -1,5 +1,6 @@
 import socket
 import os
+from programaC.programa import *
 
 # Define o host e a porta
 HOST = 'localhost'
