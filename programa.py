@@ -16,8 +16,10 @@ def buscaPelaFunc3():
     lib.func3POO.restype = ctypes.c_char_p
 
     str = lib.func3POO(b_nomeArqDados, 1, b_buscainput)
-    str = str.decode("ascii")
-    print(str)
+    str = str.decode("ascii") + "\n"
+    #print(str)
+    return str
+
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import socket
 import os
-from programaC.programa import *
+from programa import buscaPelaFunc3
 
 # Define o host e a porta
 HOST = 'localhost'
@@ -48,7 +48,7 @@ print(f'Connection from {client_address} established.')
 try:
     while True:
         # Recebe dados do cliente
-        data = client_socket.recv(1024).decode('utf-8')
+        data = client_socket.recv(1024).decode('ascii')
         if not data:
             break
         print(f'Received from client: {data}')
@@ -60,11 +60,14 @@ try:
         elif data.startswith("close "):
             nome_arquivo = data.split(" ", 1)[1]
             response = fechar_arquivo(nome_arquivo)
+        elif data.startswith("search"):
+            # return 
+            response = buscaPelaFunc3()
         else:
             response = "ERRO: Comando desconhecido."
 
         # Envia uma resposta de volta para o cliente
-        client_socket.sendall(response.encode('utf-8'))
+        client_socket.sendall(response.encode('ascii'))
 
 finally:
     # Fecha a conexão
