@@ -214,7 +214,7 @@ char *func3POO(char *arqDados, int buscas, char *strinput)
         output_string = buscaSequencialPOO(campos, strs, intrs, f, qntd);
     }
 
-    // printf("%s", output_string);
+    //printf("%s", output_string);
 
     fclose(stream);
     fclose(f);

@@ -34,12 +34,13 @@ def initArquivo(nomeArqDados):
 #todo: testar 
 def buscaPelaFunc3():
     nomeArqDados = input("Insira o nome do arquivo de dados: ")
-    buscainput = '1 id 225193'
+    buscainput = '2 idade 32 nacionalidade "GERMANY"'
 
     b_nomeArqDados = nomeArqDados.encode("ascii")
     b_buscainput = buscainput.encode("ascii")
 
     lib.func3POO.argtypes = [ctypes.c_char_p, ctypes.c_int,ctypes.c_char_p]
+    lib.func3POO.restype = ctypes.c_char_p
     str = lib.func3POO(b_nomeArqDados, 1, b_buscainput)
     print(str)
 
