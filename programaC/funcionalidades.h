@@ -11,5 +11,6 @@ int func3(char *arqDados, int n);
 int func4(char *arqDados, char *indice);
 void func5(char *arqDados, char *indice, int n);
 void func6(char *arqDados, char *indice, int n);
+void func7(char *arqDados, char *indice);
 
 #endif
