@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +17,10 @@ public class FifaGUI extends JFrame implements ActionListener {
     private JTextField nacionalidade;
     private JTextField nomeClube;
     private JButton buttonOK;
+    private JButton remover;
+    private JButton alterar;
+
+    private JTextArea instrucoes;
 
     private Socket socket;
     private PrintWriter out;
@@ -32,7 +37,9 @@ public class FifaGUI extends JFrame implements ActionListener {
         }
 
         JPanel jp = (JPanel) this.getContentPane();
-        jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+        jp.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Espaçamento entre componentes
 
         // cria menu
         JMenuBar menuBar = new JMenuBar();
@@ -62,41 +69,101 @@ public class FifaGUI extends JFrame implements ActionListener {
         menuArquivos.add(itemSair);
 
         // Layout para busca inicial dos registros
+        instrucoes = new JTextArea(
+                "Para realizar a PESQUISA, preencha ao menos um dos campos e clique em \"Pesquisar\"\n"
+                        + "Para realizar a REMOÇÃO, preencha o ID do jogador que deseja remover e clique em \"Remover\"\n"
+                        + "Para realizar a ALTERAÇÃO do dados de algum jogador, preencha todos os campos e pressione \"Alterar\"");
+        instrucoes.setEditable(false);
+        instrucoes.setLineWrap(true);
+        instrucoes.setWrapStyleWord(true);
+        instrucoes.setOpaque(false);
+
         label_id = new JLabel("ID:");
-        id = new JTextField(50);
+        id = new JTextField(20);
 
         label_idade = new JLabel("Idade:");
-        idade = new JTextField(50);
+        idade = new JTextField(20);
 
         label_nomeJogador = new JLabel("Nome do Jogador:");
-        nomeJogador = new JTextField(50);
+        nomeJogador = new JTextField(20);
 
         label_nacionalidade = new JLabel("Nacionalidade:");
-        nacionalidade = new JTextField(50);
+        nacionalidade = new JTextField(20);
 
         label_nomeClube = new JLabel("Nome do Clube:");
-        nomeClube = new JTextField(50);
+        nomeClube = new JTextField(20);
 
         buttonOK = new JButton("Procurar");
         buttonOK.setActionCommand("Procurar");
         buttonOK.addActionListener(this);
 
-        jp.add(label_id);
-        jp.add(id);
-        jp.add(label_idade);
-        jp.add(idade);
-        jp.add(label_nomeJogador);
-        jp.add(nomeJogador);
-        jp.add(label_nacionalidade);
-        jp.add(nacionalidade);
-        jp.add(label_nomeClube);
-        jp.add(nomeClube);
-        jp.add(buttonOK);
+        remover = new JButton("Remover");
+        remover.setActionCommand("Remover");
+        remover.addActionListener(this);
+
+        alterar = new JButton("Alterar");
+        alterar.setActionCommand("Alterar");
+        alterar.addActionListener(this);
+
+        // Adiciona componentes ao painel principal com GridBagLayout
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        jp.add(instrucoes, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridy++;
+        jp.add(label_id, gbc);
+
+        gbc.gridx = 1;
+        jp.add(id, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        jp.add(label_idade, gbc);
+
+        gbc.gridx = 1;
+        jp.add(idade, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        jp.add(label_nomeJogador, gbc);
+
+        gbc.gridx = 1;
+        jp.add(nomeJogador, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        jp.add(label_nacionalidade, gbc);
+
+        gbc.gridx = 1;
+        jp.add(nacionalidade, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        jp.add(label_nomeClube, gbc);
+
+        gbc.gridx = 1;
+        jp.add(nomeClube, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(buttonOK);
+        buttonPanel.add(remover);
+        buttonPanel.add(alterar);
+        jp.add(buttonPanel, gbc);
 
         setTitle("FIFINHA");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setSize(400, 300);
+        setSize(400, 360);
         setLocationRelativeTo(null);
     }
 
@@ -112,9 +179,18 @@ public class FifaGUI extends JFrame implements ActionListener {
                 fecharArquivoBinario();
                 break;
             case "listagem":
+                if (nomeArqBin == null) {
+                    JOptionPane.showMessageDialog(this, "Por favor, carregue um arquivo primeiro!", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 StringBuilder chamaFunc2 = new StringBuilder();
                 chamaFunc2.append("2 ").append(nomeArqBin);
                 out.println(chamaFunc2);
+
+                JOptionPane.showMessageDialog(this, "Verifique que o resultado da listagem está no terminal!");
+
                 break;
             case "sair":
                 int option = JOptionPane.showConfirmDialog(this, "Deseja realmente sair?", "Confirmação",
@@ -129,11 +205,7 @@ public class FifaGUI extends JFrame implements ActionListener {
                 }
                 break;
             case "Procurar":
-                if (nomeArqBin == null) {
-                    JOptionPane.showMessageDialog(this, "Por favor, carregue um arquivo primeiro!", "Erro",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+                verificaSeTemArquivo();
 
                 boolean algumCampoPreenchido = !id.getText().trim().isEmpty() ||
                         !idade.getText().trim().isEmpty() ||
@@ -150,9 +222,61 @@ public class FifaGUI extends JFrame implements ActionListener {
 
                 chamaFunc3();
 
+                JOptionPane.showMessageDialog(this, "Verifique que o resultado da pesquisa está no terminal!");
+
+                break;
+            case "Remover":
+                verificaSeTemArquivo();
+
+                boolean idPreenchido = !id.getText().trim().isEmpty();
+
+                if (!idPreenchido) {
+                    JOptionPane.showMessageDialog(this,
+                            "Por favor, preencha o campo ID para realizar a remoção.", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                StringBuilder retornoRemover = new StringBuilder();
+                retornoRemover.append("5 ").append(nomeArqBin).append(" ").append("indice.bin").append(" 1\n").append("1 ")
+                        .append(id.getText().trim());
+                out.println(retornoRemover);
+                break;
+            case "Alterar":
+                verificaSeTemArquivo();
+
+                boolean todosCamposPreenchidos = !id.getText().trim().isEmpty() &&
+                        !idade.getText().trim().isEmpty() &&
+                        !nomeJogador.getText().trim().isEmpty() &&
+                        !nacionalidade.getText().trim().isEmpty() &&
+                        !nomeClube.getText().trim().isEmpty();
+
+                if (!todosCamposPreenchidos) {
+                    JOptionPane.showMessageDialog(this,
+                            "Por favor, preencha todos os campos para realizar a alteração.", "Erro",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                StringBuilder retornoAlterar = new StringBuilder();
+                retornoAlterar.append("7 ").append(nomeArqBin).append(" ").append("indice.bin\n").append("id ")
+                        .append(id.getText().trim()).append(" idade ").append(idade.getText().trim())
+                        .append(" nomeJogador ").append("\"").append(nomeJogador.getText().trim()).append("\"")
+                        .append(" nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"")
+                        .append(" clube ").append("\"").append(nomeClube.getText().trim()).append("\"");
+                out.println(retornoAlterar);
+
                 break;
             default:
                 break;
+        }
+    }
+
+    private void verificaSeTemArquivo() {
+        if (nomeArqBin == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, carregue um arquivo primeiro!", "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
         }
     }
 
@@ -198,7 +322,8 @@ public class FifaGUI extends JFrame implements ActionListener {
                 cont++;
             }
             if (!nomeJogador.getText().trim().isEmpty()) {
-                campos.append("nome ").append("\"").append(nomeJogador.getText().trim()).append("\"").append(" ");
+                campos.append("nomeJogador ").append("\"").append(nomeJogador.getText().trim()).append("\"")
+                        .append(" ");
                 cont++;
             }
             if (!nacionalidade.getText().trim().isEmpty()) {
