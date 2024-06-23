@@ -36,9 +36,8 @@ void inicializaRegistro(registro *r);
 void imprimeRegistro(registro r);
 void buscaSequencial (char campos[][20], char strs[][20], int *intrs, FILE *f, int qntd);
 int tamReal(registro r);
-void remocaoSequencial (char campos[][20], char strs[][20], int *intrs, FILE *f_dados, registroIndice *vet, int qntd, cabecalho *c, t_lista *removidos);
-void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice *vet, t_lista *removidos, long ByteOffset);
-void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[][20], int *intrs, int qntd, cabecalho *c, t_lista *removidos);
+void remocaoSequencial (char campos[][20], char strs[][20], int *intrs, FILE *f_dados, registroIndice *vet, int qntd, cabecalho *c, t_lista *removidos, t_lista *removidos_ordenado);
+void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[][20], int *intrs, int qntd, cabecalho *c, t_lista *removidos, t_lista *removidos_ordenado);
 void carregaRemOrd(t_lista *removidos, FILE *f);
 void reescreveRemovidos(FILE *f, t_lista *removidos);
 void carregaRemovidos(t_lista *removidos, FILE *f);
@@ -46,6 +45,7 @@ void reutilizaEspaco(FILE *f_dados, long parada);
 void novoRegistro(registro *r, registroIndice *ri);
 void insereFinalArq(FILE* f_dados, registro *r, cabecalho *c, registroIndice **vet, registroIndice *ri);
 char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *f, int qntd);
+void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice *indice_dinamico, t_lista *removidos, t_lista *removidos_ordenado ,long byteOffset);
 
 
 #endif

@@ -111,6 +111,12 @@ int main()
         scanf("%s %s %d", arqDados, nomeIndice, &nroBuscas);
         func6(arqDados, nomeIndice, nroBuscas);
         break;
+
+    case '7':
+        scanf("%s %s", arqDados, nomeIndice);
+        func7(arqDados, nomeIndice);
+        break;
+
     case '9':
         printf("entrei na 9\n");
         fflush(stdout);

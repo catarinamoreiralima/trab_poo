@@ -259,7 +259,8 @@ public class FifaGUI extends JFrame implements ActionListener {
                 }
 
                 StringBuilder retornoAlterar = new StringBuilder();
-                retornoAlterar.append("7 ").append(nomeArqBin).append(" ").append("indice.bin\n").append("id ")
+                retornoAlterar.append("7 ").append(nomeArqBin).append(" ").append("indice.bin 1\n").append("1 id ")
+                        .append(id.getText().trim()).append('\n').append("1 id ")
                         .append(id.getText().trim()).append(" idade ").append(idade.getText().trim())
                         .append(" nomeJogador ").append("\"").append(nomeJogador.getText().trim()).append("\"")
                         .append(" nacionalidade ").append("\"").append(nacionalidade.getText().trim()).append("\"")

@@ -140,6 +140,10 @@ void inicializaRegistro(registro *r)
 /// @param r registro a ser impresso
 void imprimeRegistro(registro r)
 {
+    printf("ID do Jogador: %d\n", r.id);
+
+    printf("Idade do Jogador: %d\n", r.idade);
+    
     // imprime preambulo
     printf("Nome do Jogador: ");
     if (r.tamNomeJog > 0) // verifica se há esse dado
@@ -487,7 +491,7 @@ int tamReal(registro r)
 /// @param f_ind arquivo de indice
 /// @param qntd quantos campos na remocao
 /// @param c cabecalho
-void remocaoSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f_dados, registroIndice *vet, int qntd, cabecalho *c, t_lista *removidos)
+void remocaoSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f_dados, registroIndice *vet, int qntd, cabecalho *c, t_lista *removidos, t_lista *removidos_ordenado)
 {
 
     char bate;
@@ -575,7 +579,7 @@ void remocaoSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f_d
         // se nenhum campo nao bateu, imprime e aumenta contador -> aqui ja garante que ele nao estava removido antes e evita acesso desnecessario
         if (bate)
         {           
-            removeLogicamente(&r, c, f_dados, vet, removidos, byteOffsetAtual);
+            removeLogicamente(&r, c, f_dados, vet, removidos, removidos_ordenado, byteOffsetAtual);
 
         }
 
@@ -602,7 +606,7 @@ void remocaoSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f_d
 /// @param qntd quantidade de campos
 /// @param c cabecalho do arquivo de dados
 /// @param removidos lista dinamica dos registros removidos
-void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[][20], int *intrs, int qntd, cabecalho *c, t_lista *removidos)
+void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[][20], int *intrs, int qntd, cabecalho *c, t_lista *removidos, t_lista *removidos_ordenado)
 {
 
     long byteOffsteAtual = -1;
@@ -636,7 +640,7 @@ void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[
 
     // se ja nao estiver removido, remove
     if (r.removido != '1')
-        removeLogicamente(&r, c, f_dados, vet, removidos, byteOffsteAtual);
+        removeLogicamente(&r, c, f_dados, vet, removidos, removidos_ordenado, byteOffsteAtual);
 
     liberaRegistro(&r);
 }
@@ -647,7 +651,7 @@ void remocaoID(registroIndice *vet, FILE *f_dados, char campos[][20], char strs[
 /// @param f_dados ponteiro pra arquivo de dados
 /// @param vet indice dinamico
 /// @param removidos lista dinamica removidos
-void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice *indice_dinamico, t_lista *removidos, long byteOffset)
+void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice *indice_dinamico, t_lista *removidos, t_lista *removidos_ordenado, long byteOffset)
 {
 
     t_elemento e_lista; // buffer p insercao lista removidos
@@ -667,6 +671,7 @@ void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice 
     e_lista.tamanho = r->tamanhoRegistro;
     // insere na lista de removidos
     inserirPrimeiro(e_lista, removidos);
+    inserirOrdenado(e_lista, removidos_ordenado);
 }
 
 /// @brief funcao que carrega o byteOffsets e tamanhos dos registros removidos de um arquivo de dados em uma lista ligada
