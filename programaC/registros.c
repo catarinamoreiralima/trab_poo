@@ -162,6 +162,46 @@ void imprimeRegistro(registro r)
     printf("\n");
 }
 
+char* imprimeRegistroStream(registro r)
+{
+    char *resposta;
+    size_t size;
+    FILE *stream;
+    stream = open_memstream(&resposta, &size);
+    
+    // imprime preambulo
+    fprintf(stream, "Nome do Jogador: ");
+    if (r.tamNomeJog > 0) // verifica se há esse dado
+        fprintf(stream,"%s\n", r.nomeJogador);
+    else
+        fprintf(stream,"SEM DADO\n");
+
+
+
+    fprintf(stream, "Nacionalidade do Jogador: ");
+    if (r.tamNacionalidade > 0) // verifica se há esse dado
+        fprintf(stream, "%s\n", r.nacionalidade);
+    else
+        fprintf(stream, "SEM DADO\n");
+
+
+
+    fprintf(stream,"Clube do Jogador: ");
+    if (r.tamNomeClube > 0) // verifica se há esse dado
+        fprintf(stream,"%s\n", r.nomeClube);
+    else
+        fprintf(stream,"SEM DADO\n");
+
+
+    fprintf(stream,"\n");
+
+    fclose(stream);
+    
+    return resposta;
+
+}
+
+
 /**
  * Performs a sequential search in a file to find records that match the given
  * fields and values. Prints the records that match all the fields. If the
@@ -181,7 +221,7 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
     char eh_id, bate;
     int cont;
     registro r;
-
+    char *resposta;
     cont = 0;
 
     eh_id = 0;
@@ -194,6 +234,7 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
 
         // tudo bate ate q se prove o contrario
         bate = 1;
+    
 
         for (int j = 0; j < qntd; j++) // para cada campo
         {
@@ -266,10 +307,16 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
                 }
             }
         }
+
+   
         // se nenhum campo nao bateu, imprime e aumenta contador
         if (bate)
         {
-            imprimeRegistro(r);
+            // abre um file para agir como uma stream, read and write
+            resposta = imprimeRegistroStream(r);
+            printf("%s", resposta);
+
+
             cont++;
             if (eh_id)
             {
@@ -288,10 +335,140 @@ void buscaSequencial(char campos[][20], char strs[][20], int *intrs, FILE *f, in
     // se nao encontrou nenhum registro, imprime mensagem de erro
     if (cont == 0)
     {
-        printf("Registro inexistente.\n\n");
+        sprintf(resposta, "Registro inexistente.\n\n");
+        printf("%s", resposta);
 
         return;
     }
+}
+
+char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *f, int qntd)
+{
+
+    char eh_id, bate;
+    int cont;
+    registro r;
+    char *resposta;
+    cont = 0;
+
+    eh_id = 0;
+    // verifica registro a registro se bate todos os campos e se sim, imprime
+    while (leRegistroArquivo(f, &r))
+    {
+
+        FILE *aux = f;
+        int tam_reg = r.tamanhoRegistro;
+
+        // tudo bate ate q se prove o contrario
+        bate = 1;
+    
+
+        for (int j = 0; j < qntd; j++) // para cada campo
+        {
+
+            // se estiver removido, nao bate
+            if (r.removido == '1')
+            {
+                bate = 0;
+                break;
+            }
+
+            if (strcmp(campos[j], "id") == 0) // se o campo j é id
+            {
+                eh_id = 1;
+                if (r.id != intrs[j]) // se o id NAO é o mesmo
+                {
+                    bate = 0; // nao bate
+                    break; // sai fora
+                }
+            }
+            if (strcmp(campos[j], "idade") == 0) //se o campo j é idade
+                if (r.idade != intrs[j]) // se a idade NAO eh a mesma
+                {
+                    bate = 0;
+                    break;
+                }
+
+            if (strcmp(campos[j], "nacionalidade") == 0)
+            {
+                // verifica tamanho -> erro no strcmp para string inexistente
+                if (r.tamNacionalidade == 0)
+                {
+                    bate = 0;
+                    break;
+                }
+                if (strcmp(r.nacionalidade, strs[j]))
+                {
+                    bate = 0;
+                    break;
+                }
+            }
+
+            if (strcmp(campos[j], "nomeJogador") == 0)
+            {
+                // verifica tamanho -> erro no strcmp para string inexistente
+                if (r.tamNomeJog == 0)
+                {
+                    bate = 0;
+                    break;
+                }
+                if (strcmp(r.nomeJogador, strs[j]))
+                {
+                    bate = 0;
+                    break;
+                }
+            }
+            if (strcmp(campos[j], "nomeClube") == 0)
+            {
+                // verifica tamanho -> erro no strcmp para string inexistente
+                if (r.tamNomeClube == 0)
+                {
+                    bate = 0;
+                    break;
+                }
+
+                if (strcmp(r.nomeClube, strs[j]))
+                {
+                    bate = 0;
+                    break;
+                }
+            }
+        }
+
+   
+        // se nenhum campo nao bateu, imprime e aumenta contador
+        if (bate)
+        {
+            // abre um file para agir como uma stream, read and write
+            resposta = imprimeRegistroStream(r);
+            //printf("%s", resposta);
+
+
+            cont++;
+            if (eh_id)
+            {
+                // libera alocacao
+                liberaRegistro(&r);
+                break;
+            }
+        }
+
+        // libera alocacao
+        liberaRegistro(&r);
+
+
+    }
+
+    // se nao encontrou nenhum registro, imprime mensagem de erro
+    if (cont == 0)
+    {
+        sprintf(resposta, "Registro inexistente.\n\n");
+        //printf("%s", resposta);
+
+        
+    }
+
+    return resposta;
 }
 
 /// @brief funcao que verifica o tamanho das informacoes validas de um registro

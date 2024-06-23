@@ -159,7 +159,7 @@ int func3(char *arqDados, int buscas)
     fclose(f);
 }
 
-int func3POO(char *arqDados, int buscas, char *strinput)
+char *func3POO(char *arqDados, int buscas, char *strinput)
 {
     
     FILE *f;
@@ -169,6 +169,7 @@ int func3POO(char *arqDados, int buscas, char *strinput)
     char strs[20][20];
     int intrs[20];
     int eh_id;
+    char *output_string;
 
     // abre arquivo em modo leitura
     abreArquivoBinario(&f, arqDados, "rb");
@@ -176,8 +177,8 @@ int func3POO(char *arqDados, int buscas, char *strinput)
     leCabecalho(f, &c);
     if (c.status == '0')
     {
-        printf("Falha no processamento do arquivo.\n");
-        return 1;
+        sprintf(output_string,"Falha no processamento do arquivo.\n");
+        return output_string;
     }
 
     // abre string input como uma stream
@@ -197,7 +198,7 @@ int func3POO(char *arqDados, int buscas, char *strinput)
             if (strcmp(campos[j], "idade") == 0 || strcmp(campos[j], "id") == 0)
                 fscanf(stream, "%d", &intrs[j]);
             else
-                scan_quote_string(strs[j]);
+                scan_quote_string_stream(strs[j], stream);
         }
 
         // IMPRIME QUAL A BUSCA
@@ -208,11 +209,16 @@ int func3POO(char *arqDados, int buscas, char *strinput)
 
         pulaCabecalho(f);
 
-        buscaSequencial(campos, strs, intrs, f, qntd);
+        output_string = buscaSequencialPOO(campos, strs, intrs, f, qntd);
     }
+
+    
+    //printf("%s", output_string);
 
     fclose(stream);
     fclose(f);
+
+    return output_string;
 }
 
 /// @brief Cria um arquivo de indice com base em um arquivo de dados existente

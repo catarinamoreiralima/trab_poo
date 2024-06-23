@@ -34,13 +34,14 @@ def initArquivo(nomeArqDados):
 #todo: testar 
 def buscaPelaFunc3():
     nomeArqDados = input("Insira o nome do arquivo de dados: ")
-    buscainput = "add aq"
+    buscainput = '1 id 225193'
 
     b_nomeArqDados = nomeArqDados.encode("ascii")
     b_buscainput = buscainput.encode("ascii")
 
-    lib.func3POO.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
-    lib.func3POO(b_nomeArqDados, 1, b_buscainput)
+    lib.func3POO.argtypes = [ctypes.c_char_p, ctypes.c_int,ctypes.c_char_p]
+    str = lib.func3POO(b_nomeArqDados, 1, b_buscainput)
+    print(str)
 
 def main():
     # Code to be executed when the script is run directly
@@ -48,6 +49,7 @@ def main():
     # buscaTest()
     # arquivosTest()
     # func4Test()
+    buscaPelaFunc3()
 
     #nomeArqDados = input("Insira o nome do arquivo de dados: ")
     #initArquivo(nomeArqDados)
