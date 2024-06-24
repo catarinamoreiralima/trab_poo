@@ -86,9 +86,13 @@ try:
             print("Removendo o registro...")
 
             nome_indice = lines[0].split(" ")[2]
-            removerRegistro("binario6.bin", "indice.bin", lines[1])
-            
-            print("Registro removido")
+            e = removerRegistro(nome_arquivo, "indice.bin", lines[1])
+
+            print(e)
+            if (e < 0):
+                print("Falha" + str(e) + " ao remover o registro")
+            else:
+                print("Registro removido!")
 
         elif (cmd == "7"): # alterar
             print("Alterando o registro...")

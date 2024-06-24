@@ -118,31 +118,43 @@ char *func2POO(char *arqDados)
 
     char *output_str;
 
+
     // Abre arquivo binário para leitura
-    abreArquivoBinario(&fbin, arqDados, "rb");
+    int i = abreArquivoBinario(&fbin, arqDados, "rb");
+
+    if(i == -1){
+        printf("Falha na abertura do arquivo.\n");
+         exit(0);
+    } 
 
     // lê as infos do cabeçalho, ajustando também o ponteiro de leitura
     leCabecalho(fbin, &c);
-
-    // verifica se está consistente
-    if (c.status == '0')
-    {
-        sprintf(output_str,"Falha no processamento do arquivo.\n");
-        exit(0);
-    }
-    // verifica se existem registros
-    if (c.nroRegArq == 0)
-    {
-        sprintf(output_str,"Registro inexistente.\n\n");
-        exit(0);
-    }
-
-    if(output_str != NULL) printf("%s", output_str);
 
     FILE *stream;
     size_t size;
     stream = open_memstream(&output_str, &size);
 
+
+
+    // verifica se está consistente
+    if (c.status == '0')
+    {
+        //fprintf(stream,"Falha no processamento do arquivo.\n");
+        
+        return "Falha no processamento do arquivo.\n";
+    }
+    // verifica se existem registros
+    if (c.nroRegArq == 0)
+    {
+        return "Registro inexistente.\n";
+        //fprintf(stream,"Registro inexistente.\n\n");
+        //exit(0);
+    }
+
+    if(output_str != NULL) printf("%s", output_str);
+
+
+    printf("hello");
 
     //int i = 0;
     //char *buffer;
@@ -156,6 +168,8 @@ char *func2POO(char *arqDados)
             //buffer = imprimeRegistroStream(r);
             fprintf(stream, "%s\n", imprimeRegistroStream(r));
 
+        }else{
+            fprintf(stream, "Registro foi removido. \n");
         }
         //printf("%d registros a listar\n", i);
         //printf("%s", output_str);
@@ -564,7 +578,7 @@ void func5(char *arqDados, char *indice, int n)
 /// @param arqDados nome do arquivo de dados
 /// @param indice nome do arquivo de indice
 /// @param n numero de remocoes
-void func5POO(char *arqDados, char *indice, int n, char *target)
+int func5POO(char *arqDados, char *indice, int n, char *target)
 {
 
     FILE *f_dados, *f_ind;                 // ponteiros responsáveis por manipular arquivo de dados e de índice
@@ -588,7 +602,8 @@ void func5POO(char *arqDados, char *indice, int n, char *target)
     if (c_dados.status == '0')
     {
         printf("Falha no processamento do arquivo por causa do status.\n");
-        exit(0);
+        //exit(0);
+        return -1;
     }
 
     // se nao existem registros nao logicamente removidos, fecha
@@ -596,7 +611,8 @@ void func5POO(char *arqDados, char *indice, int n, char *target)
     {
         // nao tem nada pra remover
         fclose(f_dados);
-        exit(0);
+        return -2;
+        //exit(0);
     }
 
     /*   // verifica se ja existe um arquivo de indice
@@ -678,6 +694,7 @@ void func5POO(char *arqDados, char *indice, int n, char *target)
             {
                 fscanf(stream,"%d", &intrs[j]);
                 eh_id = 1;
+                //printf("eh id\n");
             }
 
             // se nao for id, ve se eh idade
@@ -693,6 +710,7 @@ void func5POO(char *arqDados, char *indice, int n, char *target)
         {
             // remocao por id - utilizando indice
             remocaoID(indice_dinamico, f_dados, campos, strs, intrs, qntd, &c_dados, &removidos, &removidos_ordenado);
+            //printf("removido\n");
         }
         else
         {
@@ -732,12 +750,15 @@ void func5POO(char *arqDados, char *indice, int n, char *target)
 
     // fecha dados
     fclose(f_dados);
+
     fclose(stream);
 
     liberaLista(&removidos);
 
-    binarioNaTela(arqDados);
-    binarioNaTela(indice);
+    //binarioNaTela(arqDados);
+    //binarioNaTela(indice);
+
+    return 0;
 }
 
 /// @brief Insere n registros no arquivo de dados e no de indice

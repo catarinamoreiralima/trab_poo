@@ -12,7 +12,7 @@ int abreArquivoBinario(FILE **f, char *nome, char *modo){
     if ((*f) == NULL){
         printf("Falha no processamento do arquivo na abertura do %s.\n", nome);
         //se nao conseguir abrir, ja fecha o programa
-        exit(0);
+        return -1;
     }
     return 0;
 }
