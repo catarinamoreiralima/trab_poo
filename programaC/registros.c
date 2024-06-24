@@ -470,8 +470,7 @@ char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *
     // se nao encontrou nenhum registro, imprime mensagem de erro
     if (cont == 0)
     {
-        sprintf(resposta, "Registro inexistente.\n\n");
-        //printf("%s", resposta);
+        return "Registro inexistente.";
 
         
     }

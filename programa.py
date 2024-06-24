@@ -34,5 +34,13 @@ def listagemRegistros(nomeArqDados):
     # print(str)
     return str
 
+def removerRegistro(nomeArqDados, nomeIndice, user_input):
+    b_nomeArqDados = nomeArqDados.encode("ascii")
+    b_nomeIndice = nomeIndice.encode("ascii")
+    b_user_input = user_input.encode("ascii")
+
+    lib.func5POO.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p]
+    lib.func5POO(b_nomeArqDados, b_nomeIndice, 1, b_user_input)
+
 if __name__ == "__main__":
     listagemRegistros("binario3.bin")

@@ -63,7 +63,7 @@ try:
         #print(cmd)
         #print(nome_arquivo)
 
-        if (cmd == "2"): # listagem
+        if (cmd == "2"): # listar
             print("Listagem de registros: ")
             response = listagemRegistros(nome_arquivo)
 
@@ -74,10 +74,21 @@ try:
             
             print("Abra " + listFileName + " para visualizar a lista de registros")
 
-        elif (cmd == "3"): # busca
+        elif (cmd == "3"): # buscar
             #print("Fazendo a busca...")
             response = buscaPelaFunc3(nome_arquivo, lines[1])
             print(response)
+
+        elif(cmd == "5"): # remover
+
+            # TODO: testar! ele roda de boa sem dar erro, mas depois pra abrir
+            # o arquivo pela listagem dá segfault :(
+            print("Removendo o registro...")
+
+            nome_indice = lines[0].split(" ")[2]
+            removerRegistro("binario6.bin", "indice.bin", lines[1])
+            
+            print("Registro removido")
 
         elif (cmd == "7"): # alterar
             print("Alterando o registro...")

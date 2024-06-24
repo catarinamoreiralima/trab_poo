@@ -246,10 +246,12 @@ char *func3POO(char *arqDados, int buscas, char *strinput)
     abreArquivoBinario(&f, arqDados, "rb");
 
     leCabecalho(f, &c);
+
+    
     if (c.status == '0')
     {
-        sprintf(output_string, "Falha no processamento do arquivo.\n");
-        return output_string;
+        //sprintf(output_string, "Falha no processamento do arquivo.\n");
+        return "Falha no processamento do arquivo";
     }
 
     // abre string input como uma stream
@@ -551,6 +553,186 @@ void func5(char *arqDados, char *indice, int n)
 
     // fecha dados
     fclose(f_dados);
+
+    liberaLista(&removidos);
+
+    binarioNaTela(arqDados);
+    binarioNaTela(indice);
+}
+
+/// @brief Funcionalidade que realiza n remocoes
+/// @param arqDados nome do arquivo de dados
+/// @param indice nome do arquivo de indice
+/// @param n numero de remocoes
+void func5POO(char *arqDados, char *indice, int n, char *target)
+{
+
+    FILE *f_dados, *f_ind;                 // ponteiros responsáveis por manipular arquivo de dados e de índice
+    cabecalho c_dados;                     // buffer de cabeçalho de dados
+    cabecalhoIndice c_ind;                 // buffer de cabeçalho de índice
+    int qntd;                              // quantidade de campos para filtrar a remocao
+    char campos[20][20];                   // lista de campos para remocao
+    char strs[20][20];                     // campos string
+    int intrs[20];                         // campos int
+    int eh_id;                             // verifica se é id
+    registroIndice *indice_dinamico;       // vetor que armazena todos os registros contidos no índice
+    t_lista removidos, removidos_ordenado; // lista que contém todos os registros removidos no arquivo de dados
+
+    // abre arquivo de dados em modo leitura e escrita
+    abreArquivoBinario(&f_dados, arqDados, "r+b");
+
+    // le cabecalho arquivo de dados
+    leCabecalho(f_dados, &c_dados);
+
+    // verifica se arquivo de dados está conscistente
+    if (c_dados.status == '0')
+    {
+        printf("Falha no processamento do arquivo por causa do status.\n");
+        exit(0);
+    }
+
+    // se nao existem registros nao logicamente removidos, fecha
+    if (c_dados.nroRegArq == 0)
+    {
+        // nao tem nada pra remover
+        fclose(f_dados);
+        exit(0);
+    }
+
+    /*   // verifica se ja existe um arquivo de indice
+      f_ind = fopen(indice, "rb");
+      // se nao tem, cria um
+
+      if (f_ind == NULL)
+      {
+          func4(arqDados, indice);
+          // como a funcionalidade 4 fecha o arquivo, abrimos novamente
+          f_ind = fopen(indice, "r+b");
+      }
+
+      // le cabecalho
+      leCabecalhoIndice(f_ind, &c_ind);
+
+      // se arquivo inconscistente, destroi e cria outro
+      if (c_ind.status == '0')
+      {
+          destroiIndice(indice);
+          func4(arqDados, indice);
+          f_ind = fopen(indice, "rb");
+          leCabecalhoIndice(f_ind, &c_ind);
+      } */
+
+    func4(arqDados, indice);
+    f_ind = fopen(indice, "rb");
+    leCabecalhoIndice(f_ind, &c_ind);
+
+    // carrega indice para memoria primaria
+    indice_dinamico = carregaIndice(f_ind, c_dados.nroRegArq);
+
+    // status inconscistente
+    c_ind.status = '0';
+
+    // escreve inconscistente
+    fwrite(&c_ind.status, sizeof(char), 1, f_ind);
+    // fecha arquivo
+    fclose(f_ind);
+
+    // inicializando as listas de registros removidos original e ordenada
+    inicializar(&removidos);
+    inicializar(&removidos_ordenado);
+
+    // verifica se há registro no arquivo de dados
+    if (c_dados.nroRegRem > 0)
+    {
+        // carrega lista de registros logicamente removidos do arquivo de dados
+        carregaRemovidos(&removidos, f_dados);
+
+        // volta ao inicio
+        fseek(f_dados, 0, SEEK_SET);
+        pulaCabecalho(f_dados);
+
+        // carrega a lista de removidos ordenada inversamente por tamanho - logica best fit
+        carregaRemOrd(&removidos_ordenado, f_dados);
+    }
+
+    FILE *stream;
+    stream = fmemopen(target, strlen(target), "r");
+
+    // percorrendo as n remocoes
+    for (int i = 0; i < n; i++)
+    {
+
+        // le quantos campos serao utilizados na remocao
+        fscanf(stream,"%d", &qntd);
+
+        // para cada busca, zera o eh_id
+        eh_id = 0;
+
+        // pega os campos
+        for (int j = 0; j < qntd; j++)
+        {
+            // le o campo
+            fscanf(stream,"%s", campos[j]);
+            //  verifica se é id
+            if (strcmp(campos[j], "id") == 0)
+            {
+                fscanf(stream,"%d", &intrs[j]);
+                eh_id = 1;
+            }
+
+            // se nao for id, ve se eh idade
+            else if (strcmp(campos[j], "idade") == 0)
+                fscanf(stream,"%d", &intrs[j]);
+            // senao, é string
+            else
+                scan_quote_string_stream(strs[j], stream);
+        }
+
+        // se algum campo é id - remove utilizando indice
+        if (eh_id)
+        {
+            // remocao por id - utilizando indice
+            remocaoID(indice_dinamico, f_dados, campos, strs, intrs, qntd, &c_dados, &removidos, &removidos_ordenado);
+        }
+        else
+        {
+            //  volta ao primeiro registro
+            fseek(f_dados, 0, SEEK_SET);
+            // pula o cabecalho
+            pulaCabecalho(f_dados);
+            // remocao sequencial
+            remocaoSequencial(campos, strs, intrs, f_dados, indice_dinamico, qntd, &c_dados, &removidos, &removidos_ordenado);
+        }
+    }
+
+    // abrimos um novo pq, como o novo indice vai ter menos entradas, no r+b ficaria com lixo no fim - modo wb destroi o que tinha antes
+    abreArquivoBinario(&f_ind, indice, "wb");
+    // reescrevendo -> indice agora esta ok
+    c_ind.status = '1';
+    // reescrevendo o cabecalho do indice
+    escreveCabIndice(f_ind, &c_ind);
+    // reescreve alteracoes no disco e ja da flcose -> fecha o arquivo
+    escreveIndice(f_ind, &indice_dinamico, c_dados.nroRegArq);
+
+    fclose(f_ind);
+
+    // se possui arquivos removidos
+    if (!vazia(&removidos))
+    {
+        c_dados.topo = removidos.primeiro->elemento.byteOffset;
+        //  reescreve os removidos
+        reescreveRemovidos(f_dados, &removidos);
+    }
+    else
+    {
+        c_dados.topo = -1;
+    }
+    // ja retorna o ponteiro ao inicio e escreve cabecalho
+    escreveCabecalho(f_dados, &c_dados);
+
+    // fecha dados
+    fclose(f_dados);
+    fclose(stream);
 
     liberaLista(&removidos);
 
