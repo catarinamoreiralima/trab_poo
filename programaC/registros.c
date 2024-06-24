@@ -356,10 +356,18 @@ char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *
     char eh_id, bate;
     int cont;
     registro r;
-    char *resposta;
+
     cont = 0;
 
+    char *resposta;
+    size_t size;
+    FILE *stream;
+
+    stream = open_memstream(&resposta, &size);
+
     eh_id = 0;
+
+    char *buf;
     // verifica registro a registro se bate todos os campos e se sim, imprime
     while (leRegistroArquivo(f, &r))
     {
@@ -448,7 +456,9 @@ char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *
         if (bate)
         {
             // abre um file para agir como uma stream, read and write
-            resposta = imprimeRegistroStream(r);
+
+            buf = imprimeRegistroStream(r);
+            fprintf(stream, "%s \n", buf);
             //printf("%s", resposta);
 
 
@@ -467,6 +477,7 @@ char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *
 
     }
 
+    fclose(stream);
     // se nao encontrou nenhum registro, imprime mensagem de erro
     if (cont == 0)
     {
