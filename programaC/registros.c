@@ -201,7 +201,7 @@ char* imprimeRegistroStream(registro r)
         fprintf(stream,"SEM DADO\n");
 
 
-    fprintf(stream,"\n");
+    //fprintf(stream,"\n");
 
     fclose(stream);
     
