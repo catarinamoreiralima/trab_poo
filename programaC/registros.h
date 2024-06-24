@@ -46,6 +46,6 @@ void novoRegistro(registro *r, registroIndice *ri);
 void insereFinalArq(FILE* f_dados, registro *r, cabecalho *c, registroIndice **vet, registroIndice *ri);
 char * buscaSequencialPOO(char campos[][20], char strs[][20], int *intrs, FILE *f, int qntd);
 void removeLogicamente(registro *r, cabecalho *c, FILE *f_dados, registroIndice *indice_dinamico, t_lista *removidos, t_lista *removidos_ordenado ,long byteOffset);
-
+char* imprimeRegistroStream(registro r);
 
 #endif

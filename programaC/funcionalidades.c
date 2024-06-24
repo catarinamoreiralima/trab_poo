@@ -9,6 +9,7 @@
 #include "funcoes_fornecidas.h"
 #include "indice.h"
 #include "lista.h"
+#include <strings.h>
 
 /// @brief Lê um arquivo CSV e escreve seu conteúdo no formato de registros em um arquivo binário
 /// @param nomecsv Nome do arquivo csv
@@ -107,6 +108,74 @@ int func2(char *arqDados)
     // ao final, fecha o arquivo
     fclose(fbin);
 }
+
+char *func2POO(char *arqDados)
+{
+
+    FILE *fbin;
+    registro r;
+    cabecalho c;
+
+    char *output_str;
+
+    // Abre arquivo binário para leitura
+    abreArquivoBinario(&fbin, arqDados, "rb");
+
+    // lê as infos do cabeçalho, ajustando também o ponteiro de leitura
+    leCabecalho(fbin, &c);
+
+    // verifica se está consistente
+    if (c.status == '0')
+    {
+        sprintf(output_str,"Falha no processamento do arquivo.\n");
+        exit(0);
+    }
+    // verifica se existem registros
+    if (c.nroRegArq == 0)
+    {
+        sprintf(output_str,"Registro inexistente.\n\n");
+        exit(0);
+    }
+
+    if(output_str != NULL) printf("%s", output_str);
+
+    FILE *stream;
+    size_t size;
+    stream = open_memstream(&output_str, &size);
+
+
+    //int i = 0;
+    //char *buffer;
+    // enquanto existe resistro a ser lido
+    while (leRegistroArquivo(fbin, &r))
+    {
+        // verifica se registro não foi removido
+        if (r.removido == '0')
+        {
+            //i++;
+            //buffer = imprimeRegistroStream(r);
+            fprintf(stream, "%s\n", imprimeRegistroStream(r));
+
+        }
+        //printf("%d registros a listar\n", i);
+        //printf("%s", output_str);
+
+        liberaRegistro(&r);
+
+        //printf("after Libera");
+
+        // corrige posicao caso registro tenha reutilizado espaço
+        fseek(fbin, r.tamanhoRegistro - tamReal(r), SEEK_CUR);
+    }
+
+    //printf("end!\n");
+    fclose(stream);
+    //printf("%s", output_str);
+    // ao final, fecha o arquivo
+    fclose(fbin);
+    return output_str;
+}
+
 
 /// @brief Retorna n buscas
 /// @param arqDados nome do arquivo binario a ser lido
@@ -226,7 +295,6 @@ char *func3POO(char *arqDados, int buscas, char *strinput)
 /// @param arqDados Nome do arquivo de dados
 /// @param indice Nome do arquivo de índice
 /// @return 1 para sucesso e 0 para falha
-
 int func4(char *arqDados, char *indice)
 {
     FILE *f_ind;                            // ponteiro para arquivo indice

@@ -172,6 +172,10 @@ char* imprimeRegistroStream(registro r)
     size_t size;
     FILE *stream;
     stream = open_memstream(&resposta, &size);
+
+    fprintf(stream, "ID do Jogador: %d\n", r.id);
+
+    fprintf(stream, "Idade do Jogador: %d\n", r.idade);
     
     // imprime preambulo
     fprintf(stream, "Nome do Jogador: ");
