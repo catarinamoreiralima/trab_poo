@@ -615,6 +615,7 @@ int func5POO(char *arqDados, char *indice, int n, char *target)
         //exit(0);
     }
 
+    //printf("nro reg: %d\n", c_dados.nroRegArq);
     /*   // verifica se ja existe um arquivo de indice
       f_ind = fopen(indice, "rb");
       // se nao tem, cria um
@@ -657,6 +658,7 @@ int func5POO(char *arqDados, char *indice, int n, char *target)
     inicializar(&removidos);
     inicializar(&removidos_ordenado);
 
+    //printf("removidos: %d\n", c_dados.nroRegRem);
     // verifica se há registro no arquivo de dados
     if (c_dados.nroRegRem > 0)
     {
@@ -670,13 +672,15 @@ int func5POO(char *arqDados, char *indice, int n, char *target)
         // carrega a lista de removidos ordenada inversamente por tamanho - logica best fit
         carregaRemOrd(&removidos_ordenado, f_dados);
     }
-
+    //printf("trava aqui?");
     FILE *stream;
     stream = fmemopen(target, strlen(target), "r");
+
 
     // percorrendo as n remocoes
     for (int i = 0; i < n; i++)
     {
+        //printf("leitura do input...");
 
         // le quantos campos serao utilizados na remocao
         fscanf(stream,"%d", &qntd);
@@ -689,20 +693,25 @@ int func5POO(char *arqDados, char *indice, int n, char *target)
         {
             // le o campo
             fscanf(stream,"%s", campos[j]);
+            
+            printf("%s ", campos[j]);
             //  verifica se é id
             if (strcmp(campos[j], "id") == 0)
             {
                 fscanf(stream,"%d", &intrs[j]);
                 eh_id = 1;
-                //printf("eh id\n");
+                //printf("eh id...");
             }
 
             // se nao for id, ve se eh idade
-            else if (strcmp(campos[j], "idade") == 0)
+            else if (strcmp(campos[j], "idade") == 0){
                 fscanf(stream,"%d", &intrs[j]);
+                //printf("eh idade...");
             // senao, é string
-            else
+            }else{
+                //printf("eh string...");
                 scan_quote_string_stream(strs[j], stream);
+            }
         }
 
         // se algum campo é id - remove utilizando indice

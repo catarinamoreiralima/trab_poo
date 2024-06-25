@@ -86,9 +86,10 @@ try:
             print("Removendo o registro...")
 
             nome_indice = lines[0].split(" ")[2]
+            # print(lines[1])
             e = removerRegistro(nome_arquivo, "indice.bin", lines[1])
 
-            print(e)
+            # print(e)
             if (e < 0):
                 print("Falha" + str(e) + " ao remover o registro")
             else:

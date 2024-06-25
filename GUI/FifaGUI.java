@@ -239,7 +239,7 @@ public class FifaGUI extends JFrame implements ActionListener {
 
                 StringBuilder retornoRemover = new StringBuilder();
                 retornoRemover.append("5 ").append(nomeArqBin).append(" ").append("indice.bin").append(" 1\n").append("1 ")
-                        .append(id.getText().trim());
+                        .append("id ").append(id.getText().trim());
                 out.println(retornoRemover);
                 break;
             case "Alterar":
